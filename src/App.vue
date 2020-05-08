@@ -28,7 +28,7 @@
         <v-icon>mdi-github</v-icon>
       </v-btn>
     </v-app-bar>
-
+  
     <v-content>
       <Jokes/>
     </v-content>
