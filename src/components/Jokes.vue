@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <!-- <v-img :src="require('../assets/troll.png')" class="my-3" contain height="100" /> -->
     <v-row class="text-center">
       <v-col class="mb-4">
         <v-row class="text-center">
@@ -26,13 +25,13 @@
               outlined
               multiple
               small-chips
-              hint="Blacklist Flag/s."
+              hint="Blacklist Flags."
               persistent-hint
             ></v-select>
           </v-col>
           <v-col class="d-flex" cols="12" sm="4">
             <div class="text-center">
-              <v-btn x-large color="success" @click="getJoke">{{ getJokeText }}</v-btn> &nbsp;
+              <v-btn x-large color="success" @click="getJoke">Get Joke</v-btn>&nbsp;
               <v-btn x-large color="warning" @click="resetFilter">Reset</v-btn>
             </div>
           </v-col>
@@ -68,14 +67,6 @@
         <v-card-text class="display-1">{{ errors.causedBy[0] }}</v-card-text>
       </v-card>
     </div>
-    
-    <div class="ma-8"></div>
-    <v-spacer></v-spacer>
-    <v-footer absolute dark class="font-weight-medium">
-      <v-col>Api version : {{ apiVersion }}</v-col>
-      <v-col class="text-centered">Total Jokes : {{ count }}</v-col>
-      <v-col class="text-right">Updated : {{ updatedAt }}</v-col>
-    </v-footer>
   </v-container>
 </template>
 
@@ -88,69 +79,42 @@ export default {
       category: ["Any"],
       flag: []
     },
-    categories: [],
-    joke: null,
-    flags: [],
-    getJokeText: "Get Joke",
-    contains: "",
-    errors: {},
-    count: 0,
-    apiVersion: "",
-    updatedAt: ""
+    contains: ""
   }),
   methods: {
     getJoke() {
-      this.$http
-        .get(
-          "https://sv443.net/jokeapi/v2/joke/" +
-            this.filterCategories +
-            "?blacklistFlags=" +
-            this.filter.flag +
-            "&contains=" +
-            this.contains
-        )
-        .then(res => {
-          if (res.data.error) throw res.data;
-          this.joke = res.data;
-          this.getJokeText = "Next Joke";
-        })
-        .catch(err => {
-          this.joke = null;
-          this.errors = err;
-        });
+      var filterData = {
+        path: this.filterCategories,
+        query:
+          "?blacklistFlags=" + this.filter.flag + "&contains=" + this.contains
+      };
+      this.$store.dispatch("getJoke", filterData);
     },
-    getInitials() {
-      this.$http
-        .get("https://sv443.net/jokeapi/v2/info")
-        .then(res => {
-          if (res.errro) throw "Woops Something went wrong. Try again !";
-          this.categories = res.data.jokes.categories;
-          this.flags = res.data.jokes.flags;
-          this.count = res.data.jokes.totalCount;
-          this.apiVersion = res.data.version;
-          this.updatedAt = new Date(res.data.timestamp).toGMTString();
-        })
-        .catch(err => {
-          this.errors = {
-            message: err,
-            causedBy: "Unknown"
-          };
-        });
-    },
+
     resetFilter() {
       this.filter = {
         category: ["Any"],
-        flag: []
+        flag: [],
+        contains: ""
       };
     },
     removeAny() {
-      this.filter.category = this.filterCategories
+      this.filter.category = this.filterCategories;
     }
   },
-  mounted() {
-    this.getInitials();
-  },
   computed: {
+    joke() {
+      return this.$store.state.joke;
+    },
+    errors() {
+      return this.$store.state.error;
+    },
+    categories() {
+      return this.$store.state.apiInfo.jokes.categories;
+    },
+    flags() {
+      return this.$store.state.apiInfo.jokes.flags;
+    },
     filterCategories() {
       var selectedCategoreis = this.filter.category;
       return selectedCategoreis.length > 1
