@@ -38,15 +38,16 @@
     </v-content>
     <div class="ma-8"></div>
     <v-spacer></v-spacer>
-    <v-footer absolute dark class="font-weight-medium">
+    <v-footer dark class="font-weight-medium">
       <v-col>Api version : {{ apiInfo.version }}</v-col>
       <v-col class="text-centered">Total Jokes : {{ count }}</v-col>
       <v-col class="text-right">Updated : {{ apiInfo.timestamp | formatedDate }}</v-col>
     </v-footer>
   </v-app>
 </template>
-
+  
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "App",
 
@@ -55,12 +56,7 @@ export default {
     this.$store.dispatch("initialApiFetch");
   },
   computed: {
-    apiInfo() {
-      return this.$store.state.apiInfo;
-    },
-    count() {
-      return this.apiInfo.jokes.totalCount;
-    }
+    ...mapGetters(["apiInfo", "count"])
   }
 };
 </script>

@@ -30,13 +30,13 @@
             ></v-select>
           </v-col>
           <v-col class="d-flex" cols="12" sm="4">
-            <div class="text-center">
-              <v-btn x-large color="success" @click="getJoke">Get Joke</v-btn>&nbsp;
-              <v-btn x-large color="warning" @click="resetFilter">Reset</v-btn>
-            </div>
-          </v-col>
-          <v-col class="d-flex" cols="12" sm="8">
             <v-text-field v-model="contains" label="Contains.." outlined @keydown.enter="getJoke"></v-text-field>
+          </v-col>
+          <v-col class="d-flex offset-md-4" cols="12" sm="3">
+            <v-btn block x-large color="success" @click="getJoke">{{ joke ? 'Next ' : 'Get '}} Joke</v-btn>&nbsp;
+          </v-col>
+          <v-col class="d-flex" cols="12" sm="3">
+            <v-btn block x-large color="warning" @click="resetFilter">Reset</v-btn>
           </v-col>
         </v-row>
       </v-col>
@@ -71,6 +71,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "Jokes",
 
@@ -97,24 +98,14 @@ export default {
         flag: [],
         contains: ""
       };
+      this.$store.commit("resetJoke");
     },
     removeAny() {
       this.filter.category = this.filterCategories;
     }
   },
   computed: {
-    joke() {
-      return this.$store.state.joke;
-    },
-    errors() {
-      return this.$store.state.error;
-    },
-    categories() {
-      return this.$store.state.apiInfo.jokes.categories;
-    },
-    flags() {
-      return this.$store.state.apiInfo.jokes.flags;
-    },
+    ...mapGetters(["categories", "flags", "errors"]),
     filterCategories() {
       var selectedCategoreis = this.filter.category;
       return selectedCategoreis.length > 1

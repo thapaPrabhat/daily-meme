@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 export default {
   name: "SubmitJoke",
 
@@ -70,7 +71,6 @@ export default {
       { title: "Single", value: "single" },
       { title: "Two Part", value: "twopart" }
     ],
-    joke: "",
     setUp: "",
     delivery: "",
     filter: {
@@ -120,17 +120,7 @@ export default {
   },
   mounted() {},
   computed: {
-    categories() {
-      var categories = this.$store.state.apiInfo.jokes.categories;
-      return categories.length > 1
-        ? categories.filter(function(value) {
-            return value != "Any";
-          })
-        : categories;
-    },
-    flags() {
-      return this.$store.state.apiInfo.jokes.flags;
-    },
+    ...mapGetters(["categories", "flags", "joke", "errors"]),
     filterFlags() {
       var self = this;
       var flags = {};

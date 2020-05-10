@@ -11,7 +11,7 @@ const store = new Vuex.Store({
     error: {},
   },
   actions: {
-    initialApiFetch({commit}) {
+    initialApiFetch({ commit }) {
       axios
         .get("https://sv443.net/jokeapi/v2/info")
         .then(res => {
@@ -22,7 +22,7 @@ const store = new Vuex.Store({
           console.log(err)
         });
     },
-    getJoke({commit}, data) {
+    getJoke({ commit }, data) {
       axios
         .get("https://sv443.net/jokeapi/v2/joke/" + data.path + data.query)
         .then(res => {
@@ -34,7 +34,7 @@ const store = new Vuex.Store({
           commit('getJokeError', err)
         })
         ;
-    },
+    }
   },
   mutations: {
     initialApiInfo(state, data) {
@@ -43,9 +43,33 @@ const store = new Vuex.Store({
     setJoke(state, joke) {
       state.joke = joke
     },
-    getJokeError(state, error){
+    getJokeError(state, error) {
       state.error = error
+    },
+    resetJoke(state) {
+      state.joke = null
     }
+  },
+  getters: {
+    apiInfo: state => {
+      return state.apiInfo
+    },
+    count: (state) => {
+      return state.apiInfo.jokes ? state.apiInfo.jokes.totalCount : 0
+    },
+    categories: (state) => {
+      return state.apiInfo.jokes ? state.apiInfo.jokes.categories : []
+    },
+    flags: (state) => {
+      return state.apiInfo.jokes ? state.apiInfo.jokes.flags : []
+    },
+    joke: (state) => {
+      return state.joke
+    },
+    errors: (state) => {
+      return state.error
+    },
+
   }
 })
 export default store
