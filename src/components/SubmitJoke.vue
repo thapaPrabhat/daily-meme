@@ -8,6 +8,7 @@
               v-model="filter.category"
               :items="categories"
               label="Category"
+              required
               outlined
               hint="Choose category/s."
               persistent-hint
@@ -21,6 +22,7 @@
               item-text="title"
               item-value="value"
               label="Type"
+              required
               outlined
               hint="Type"
               persistent-hint
@@ -53,7 +55,11 @@
             </div>
           </v-col>
           <v-col>
-            <v-alert :type="submission.status" v-if="submission.status">{{ submission.message }}</v-alert>
+            <v-alert
+              dismissible
+              :type="submission.status"
+              v-if="submission.status"
+            >{{ submission.message }}</v-alert>
           </v-col>
         </v-row>
       </v-col>
@@ -71,6 +77,7 @@ export default {
       { title: "Single", value: "single" },
       { title: "Two Part", value: "twopart" }
     ],
+    joke: "",
     setUp: "",
     delivery: "",
     filter: {
@@ -116,11 +123,23 @@ export default {
           this.submission.status = "error";
           this.submission.message = "This joke was formatted incorrectly";
         });
+      setTimeout(() => {
+        this.submission.status = null;
+        this.submission.message = "";
+      }, 5000);
     }
   },
   mounted() {},
   computed: {
-    ...mapGetters(["categories", "flags", "joke", "errors"]),
+    ...mapGetters(["flags", "errors"]),
+    categories() {
+      var categories = this.$store.getters.categories;
+      return categories.length > 1
+        ? categories.filter(function(value) {
+            return value != "Any";
+          })
+        : categories;
+    },
     filterFlags() {
       var self = this;
       var flags = {};
