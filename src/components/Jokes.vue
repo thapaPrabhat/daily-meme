@@ -105,7 +105,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["categories", "flags", "errors"]),
+    ...mapGetters(["categories", "flags", "errors", 'joke']),
     filterCategories() {
       var selectedCategoreis = this.filter.category;
       return selectedCategoreis.length > 1
