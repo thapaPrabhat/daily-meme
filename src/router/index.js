@@ -14,12 +14,17 @@ Vue.use(VueRouter)
     path: '/submit-yours',
     name: 'SubmitJokes',
     component: () => import('../components/SubmitJoke.vue')
+  },
+  {
+     // catch all 404 - define at the very end
+     path: "*",
+     component: () => import("../components/404.vue")
   }
 ]
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+ mode: 'history'
 })
 
 export default router
